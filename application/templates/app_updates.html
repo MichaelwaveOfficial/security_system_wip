@@ -1,0 +1,14 @@
+<!-- High level template, abstracted to be updated and rendered in real time using Turbo Flask. -->
+<div class="index-feed-container">
+    <h1 class="page-title">Number of Captures:</h1>
+    <p class="page-info">{{ app_info.no_of_captures }}</p>
+</div>
+<div class="index-feed-container">
+    <h1 class="page-title">Last Capture Date:</h1>
+    <p class="page-info">{{ app_info.capture_date }}</p>
+    <p class="page-info">{{ app_info.capture_time }}</p>
+</div>
+<div class="index-feed-container">
+    <h1 class="page-title">Device Status:</h1>
+    <p class="page-info">{{ app_info.device_status }}</p>
+</div>

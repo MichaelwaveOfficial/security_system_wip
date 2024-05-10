@@ -1,0 +1,18 @@
+{% extends 'template.html'%}
+
+{% block body %}
+
+<div class="index-grid">
+    {% include 'app_updates.html' %}
+</div>
+<div class="bottom-index-feed-container">
+    <div class="live-content-feed">
+        <img
+            src="{{ url_for('video_stream') }}"
+            alt='live camera feed.'
+            class='img'
+        />
+    </div>
+</div>
+
+{% endblock %}
