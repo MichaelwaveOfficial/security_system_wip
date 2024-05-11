@@ -1,0 +1,70 @@
+{% extends 'template.html'%}
+
+{% block body %}
+
+<div class="page-title">{{ title }}</div>
+    <div class="image-container">
+        {% for img in image %}
+            <div class = 'capture-image'>
+                <div class = 'capture-overlay'>
+                    <a
+                    href='/static/captures/{{ img.filename }}.jpg'
+                    class='settings-text'
+                    download
+                    >
+                        Download
+                    </a>
+                    <p>
+                        Date: {{ img.capture_date }}
+                    </p>
+                    <p>
+                        Time: {{ img.capture_time }}
+                    </p>
+                    <form action = '/captures/delete/{{ img.filename }}' method = 'POST'>
+                        <button
+                            type='submit'
+                            class='settings-btn'
+                        >
+                            Delete
+                        </button>
+                    </form>
+                </div>
+                <img
+                    src='{{ img.fullpath }}'
+                    alt='{{ img.filename }}'
+                    class='img'
+                    loading='lazy'
+                />
+                <div class="capture-title">
+                    {{ img.filename }}
+                </div>  
+            </div>
+            {% endfor %}
+    </div>
+    <form action = '/captures' method = 'POST'>
+        <label for='sort_order'>By Date:</label>
+        <button 
+            type='submit'
+            name='sort_order'
+            value = 'sort_order'
+            class = 'settings-btn'
+        >
+            {{ 'Ascending' if order == True else 'Descending' }}
+        </button>
+    </form>
+    {% if current_page > 1 %}
+        <a
+            href='/captures?page={{ current_page - 1 }}'
+            class='page-info'>
+                Previous Page
+        </a>
+    {% elif current_page < total_pages %}
+        <a 
+            href='/captures?page={{ current_page + 1 }}'
+            class='page-info'>
+                Next Page
+        </a>
+    {% endif %}
+</div>
+
+{% endblock %}

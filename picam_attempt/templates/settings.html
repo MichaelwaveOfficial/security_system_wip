@@ -1,0 +1,174 @@
+{% extends 'template.html'%}
+
+{% block body %}
+
+<!-- Page to tailor the devices settings, better catering towards users requirements. -->
+<div class="page-title">{{ title }}</div>
+<!-- DIV container to contain settings in a scrollable element. -->
+<div class = 'container-scroll'>
+        <div class = 'content-scroll'>
+                <!-- Toggles for functionality On/Off. -->
+                <h1>Toggles :</h1>
+
+                <!-- Computer Vision Toggle On/Off. -->
+                <div class = 'settings-box'>
+                        <h2 class='settings-title'>Camera: <span class = 'page-info'>
+                                {% if settings.camera_toggle %} 
+                                        On 
+                                {% else %} 
+                                        Off 
+                                {% endif %}
+                        </span></h2>
+                        <form action = '/settings/update' method = 'POST'>
+                                <button
+                                type = 'submit'
+                                name = "toggle"
+                                class = 'settings-btn'
+                                value = 'camera'>
+                                {% if settings.camera_toggle %}
+                                        On
+                                {% else %}
+                                        Off
+                                {% endif %}
+                                </button>
+                        </form>
+                </div>
+
+                <!-- Motion Detection Toggle On/Off. -->
+                <div class = 'settings-box'>
+                        <h2 class='settings-title'>Computer Vision: <span class = 'page-info'>
+                                {% if settings.vision_toggle %}
+                                        On 
+                                {% else %}
+                                        Off
+                                {% endif %}
+                        </span></h2>
+                        <form action = '/settings/update' method = 'POST'>
+                                <button
+                                type = 'submit'
+                                name = "toggle"
+                                class = 'settings-btn'
+                                value = 'vision'>
+                                {% if settings.vision_toggle %}
+                                        On
+                                {% else %}
+                                        Off
+                                {% endif %}
+                                </button>
+                        </form>
+                </div>
+
+                <!-- Threshold tuning for computer vision. -->
+                <h1>Computer Vision Tuning :</h1>
+
+                <!-- Slider to control the computer vision algorithms downtime. -->
+                <div class = 'settings-box'>
+                        <h2 class='settings-title'>Time To Sleep: <span class = 'page-info'>{{ settings.sleep }}</span>S</h2>
+                        <form action = '/settings/update' method = 'POST'>
+                                <p class = 'settings-text'>0</p>
+                                <input
+                                        type = 'range'
+                                        class = 'settings-slider'
+                                        min = '0'
+                                        max = '600'
+                                        value = '{{ settings.sleep }}'
+                                        name = 'slider' 
+                                />
+                                <input
+                                        type = 'hidden'
+                                        name = 'slider_name'
+                                        value = 'sleep'
+                                />
+                        <p class = 'settings-text'>600</p>
+                        <button
+                                        type = 'submit'
+                                        name = 'form_submit'
+                                        class='settings-btn'>Apply Timer
+                        </button>
+                        </form>
+                </div>
+
+                <!-- Slider to control the computer vision algorithms threshold. -->
+                <div class = 'settings-box'>
+                        <h2 class='settings-title'>Threshold: <span class = 'page-info'>{{ settings.threshold }}</span>pixels</h2>
+                        <form action = '/settings/update' method = 'POST'>
+                                <p class = 'settings-text'>0</p>
+                                <input
+                                        type = 'range'
+                                        class = 'settings-slider'
+                                        min = '0'
+                                        max = '3000'
+                                        value = '{{ settings.threshold }}'
+                                        name = 'slider' 
+                                />
+                                        <input
+                                        type = 'hidden'
+                                        name = 'slider_name'
+                                        value = 'threshold'
+                                />
+                                <p class = 'settings-text'>3000</p>
+                                <button
+                                        type = 'submit'
+                                        name = 'form_submit'
+                                        class='settings-btn'>Apply Threshold
+                                </button>
+                        </form>
+                </div>
+
+                <!-- Slider to control the computer vision algorithms sensitivity. -->
+                <div class = 'settings-box'>
+                        <h2 class='settings-title'>Sensitivity: <span class = 'page-info'>{{ settings.sensitivity }}</span>pixels</h2>
+                        <form action = '/settings/update' method = 'POST'>
+                                <p class = 'settings-text'>0</p>
+                                <input
+                                        type = 'range'
+                                        class = 'settings-slider'
+                                        min = '0'
+                                        max = '1000'
+                                        value = '{{ settings.sensitivity }}'
+                                        name = 'slider' 
+                                />
+                                <input
+                                        type = 'hidden'
+                                        name = 'slider_name'
+                                        value = 'sensitivity'
+                                />
+                                <p class = 'settings-text'>1000</p>
+                                <button
+                                        type = 'submit'
+                                        name = 'form_submit'
+                                        class='settings-btn'>Apply Sensitivity
+                                </button>
+                        </form>
+                </div>
+
+                <!-- Options to control stream settings. -->
+                <h1>Stream Tuning :</h1>
+
+                <!-- Drop down menu to control stream framerate. -->
+                <h2 class='settings-title'>FPS: <span class = 'page-info'>{{ settings.fps }}</span>fps</h2>
+                <form action = '/settings/update' method = 'POST'>
+                        <select
+                                name = 'drop'
+                                class = 'settings-select'
+                        >
+                                <option value='20'>20</option>
+                                <option value='30'>30</option>
+                                <option value='40'>40</option>
+                                <option value='50'>50</option>
+                                <option value='60'>60</option>
+                        </select>
+                        <input type='hidden' name='drop_name' value='fps'>
+                        <!-- stream resolution quality. -->
+                        <button
+                                type = 'submit'
+                                name = 'form_submit'
+                                class = 'settings-btn'
+                        >
+                                Apply Fps
+                        </button>
+                </form>
+        </div>
+</div>
+
+{% endblock %}

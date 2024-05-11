@@ -1,0 +1,420 @@
+/* define variable constants to make life easier. */
+
+:root {
+
+    /* colours */
+    --background: #031617;
+    --primary: #7CDFEC;
+    --secondary: #143488;
+
+    --light-font: #E0FAFA;
+    --accent-font: #3A42E2;
+
+    /* caligraphy */
+    --font-family-title: 600 32px Inter, sans-serif;
+    --font-family-p:  600 48px Inter, sans-serif;
+
+    --base-font-size: 16px;
+
+    /* formatting */
+    --item-shadows: 0px 4px 4px 2px rgba(0, 0, 0, 0.5);
+    --border-radius: 15px;
+
+}
+
+/* all styling properties */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* navigation links*/
+
+a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* cursor link hover properties */
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Page Info ( h1s + ps ) */
+
+.page-title {
+    padding: 10px;
+    color: var(--light-font);
+    text-shadow: var(--item-shadows);
+    font: var(--font-family-title);
+}
+
+.page-info {
+    padding: 5px;
+    color: var(--accent-font);
+    text-shadow: var(--item-shadows);
+    font: var(--font-family-p);
+}
+
+.main-content {
+    background-color: var(--primary);
+    gap: 2px;
+    display: flex;
+}
+
+/* 
+
+
+NAVIGATION 
+
+
+*/
+
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    width: 20%;
+    margin-left: 0px;
+}
+
+.url-container {
+    background-color: var(--background);
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.nav-menu-title {
+    text-shadow: var(--item-shadows);
+    font: 48px Inter, sans-serif;
+    color: var(--light-font);
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+.nav-menu-links {
+    text-shadow: var(--item-shadows);
+    margin-top: 21px;
+    color: var(--light-font);
+    font: 24px Inter, sans-serif;
+    margin-left: 45px;
+}
+
+
+/* 
+
+
+MAIN PAGE CONTENT ON THE RIGHT SIDE. 
+
+
+*/
+
+
+
+/* right-hand side column containing the page content container. */
+.right-hand-content {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+
+/* containter for the content within the right hand column */
+
+.main-page-content {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.index-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    box-sizing: border-box;
+    float: left;
+}
+
+.index-feed-container {
+    border-radius: var(--border-radius);
+    margin: 5px;
+    box-shadow: var(--item-shadows);
+    background-color: var(--background);
+}
+
+.index-feed-container h1 {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 20px;
+}
+
+.index-feed-container p {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 28px;
+}
+
+.bottom-index-feed-container{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border-radius: var(--border-radius);
+    margin: 5px;        
+    box-shadow: var(--item-shadows);
+    background-color: var(--background);
+    height: 80vh;
+}
+
+.bottom-index-feed-container h1 {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.bottom-index-feed-container img {
+    display: block;
+    margin: 5px;
+    background-color: var(--background);
+    border-radius: var(--border-radius);
+    height: 74vh;
+    width: 155vh;
+}
+
+/* Media query for smaller screens (e.g., smartphones) */
+@media only screen and (max-width: 768px) {
+    .main-content {
+        flex-direction: column; /* Stack elements vertically on smaller screens */
+    }
+    
+    .nav-menu {
+        width: 100%; /* Take up full width on smaller screens */
+        margin-left: 0; /* Remove left margin on smaller screens */
+    }
+
+    .nav-menu-title {
+        font-size: 24px; /* Decrease font size for menu title on smaller screens */
+        margin-left: 10px; /* Adjust margin for menu title on smaller screens */
+    }
+
+    .nav-menu-links {
+        font-size: 16px; /* Decrease font size for menu links on smaller screens */
+        margin-left: 20px; /* Adjust margin for menu links on smaller screens */
+    }
+
+    .right-hand-content {
+        width: 100%; /* Take up full width on smaller screens */
+    }
+
+    .bottom-index-feed-container img {
+        height: auto; /* Allow image height to adjust according to screen width */
+        width: 100%; /* Make image width fill its container */
+    }
+}
+
+
+/*
+
+
+CAPTURES...
+
+
+*/
+
+
+/* container for thumbnail */
+.content-container {
+    margin-top: 23px;
+}
+
+/* container for image thumbnail for captures. */
+
+.image-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 15px;
+    box-sizing: border-box;
+    float: left;
+}
+
+/* the capture itself. */
+
+.capture-image {
+    display: inline;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* style the image being displayed. */
+
+.image-container img {
+    width: 100%;
+    display: block;
+    margin: auto;
+    background-color: var(--secondary);
+    border-radius: var(--border-radius);
+}
+
+/* the capture title underneath image. */
+
+.capture-title {
+    color: var(--dark-font);
+    text-align: center;
+    text-shadow: var(--item-shadows);
+    font: var(--font-family-title);
+}
+
+/* the overlay card when users hover over the image. */
+
+.capture-overlay {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-color: var(--accent-font);
+    color: var(--light-font);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.capture-image:hover .capture-overlay {
+    opacity: 1;
+}
+
+/* settings page */
+
+.container-scroll {
+    width: 95%; /* h + w might need fiddling, respective of page. */
+    height: 75%; 
+    overflow: auto; 
+    padding: 20px;
+}
+
+.content-scroll {
+    margin: 10px 20px 10px 20px; /* top right bottom left */
+    box-sizing: border-box;
+    place-items: center;
+}
+
+
+.settings-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    margin: 10px 20px 10px 20px; /* top right bottom left */
+    box-sizing: border-box;
+    place-items: center;
+}
+
+.settings-grid {
+   padding: 5px;
+   margin: 10px 10px 10px 10px; /* top right bottom left */
+   display: grid;
+   place-items: center;
+}
+
+.settings-box {
+    display: flex;
+    align-items: center;
+}
+
+.settings-btn {
+    width: 50%;
+    height: 50%;
+    background-color: var(--secondary);
+    border: none;
+    border-radius: 15px;
+    margin: 10px 40px 10px 40px; /* top right bottom left */
+    color: var(--background);
+    padding: 10px 20px;
+    font-family: var(--font-family-title);
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.settings-btn:hover {
+    background-color: var(--accent-font);
+    transform: scale(1.25);
+}
+
+.settings-apply {
+    width: 60%;
+    background-color: var(--secondary);
+    border: none;
+    border-radius: 15px;
+    margin: 10px 280px 10px 280px; /* top right bottom left */
+    color: var(--background);
+    padding: 10px 20px;
+    font-family: var(--font-family-title);
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.settings-apply:hover {
+    background-color: var(--accent-font);
+    transform: scale(1.25);
+}
+
+.settings-text{
+    color: var(--dark-font);
+    font-family: var(--font-family-title);
+    font-size: 28px;
+}
+
+.settings-slider{
+    width: 80%;
+    height: 15px;
+    border-radius: 15px;
+    outline: none;
+    opacity: 0.8;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+}
+
+.setting-slider:hover{
+    background-color: var(--accent-font);
+    opacity: 1;
+}
+
+.settings-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    font-family: var(--font-family-title);
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.settings-title {
+    padding: 10px;
+    color: var(--dark-font);
+    text-shadow: var(--item-shadows);
+    font: var(--font-family-title);
+    font-size: 20px;
+}
+
+.settings-text {
+    padding: 5px;
+    color: var(--dark-font);
+    text-shadow: var(--item-shadows);
+    font: var(--font-family-title);
+    font-size: 16px;
+}
