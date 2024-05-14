@@ -251,30 +251,31 @@ class App(object):
             # Retrive the current, untampered frame from the devices onboard camera.
             raw_frame = camera.retrieve_frame_CV2()
 
-            motion_detected = object_detection.motion_detection(previous_frame, raw_frame)
+            motion_detected = object_detection.motion_detection(previous_frame, raw_frame, camera)
 
-            frame, detections = object_detection.register_detections(raw_frame)
-
-            ## have a second dictionary to store larger detections, then pass through tracker?
+            frame, detections = object_detection.register_detections(raw_frame, camera)
 
             updated_detections = object_tracking.update_detections_V3(detections)
 
             detection_frame, threat_level = object_detection.draw_bounding_boxes(frame, updated_detections)
 
+            # Access current time, formatted to display on the video stream.
+            current_time = datetime.now().strftime('%I:%M:%S%p')
+            # Append that time by drawing the clock onto the frame.
+            time_layer = camera.draw_clock(detection_frame, current_time)
+            # Layer clock frame over the current frame, mitigates interference for bounding boxes.
+            appended_frame = cv2.addWeighted(detection_frame, 0.5, time_layer, 0.5, 0)
+
             # Encode the frame into bytes for streaming.
-            encoded_frame = camera.encode_frame(detection_frame)
+            encoded_frame = camera.encode_frame(appended_frame)
 
             if motion_detected == True and threat_level == self.threat_level:
-                
-                # Inform users of where captures will be stored. 
-                print(f'Motion detected!')
             
                 # Capture that specific frame where motion has been detected.
                 object_detection.capture_frame(
                     detection_frame, 
                     './static/captures/', 
-                    datetime.now().strftime('%a-%b-%Y_%I-%M-%S%p')
-                )
+                )   
 
             # Yielded sequence of the encoded frames as response chunks for the stream.
             yield (

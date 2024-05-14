@@ -1,8 +1,9 @@
 from ObjectTracking import ObjectTracking
 from FileHandling import FileHandling
+from Camera import Camera
 
 
-import numpy as np, cv2, os
+import numpy as np, cv2, os, time
 
 
 class ObjectDetection(object):
@@ -12,6 +13,8 @@ class ObjectDetection(object):
     '''
 
     def __init__(self, KERNEL_SIZE = (3,3)) -> None:
+
+        self.camera = Camera()
         
         self.KERNEL = KERNEL_SIZE
 
@@ -39,7 +42,7 @@ class ObjectDetection(object):
             os.makedirs(directory)
 
         # Join the desired directory and the filename to save capture.
-        filename = f'{directory}{self.file_handling.FORMATTED_FILENAME_DATE}'
+        filename = f'{directory}{str(time.strftime(self.file_handling.FORMATTED_FILENAME_DATE))}'
 
         # Write capture to directory with native filename.
         cv2.imwrite(f'{filename}.jpg', frame)
@@ -48,7 +51,30 @@ class ObjectDetection(object):
         self.file_handling.check_file_exhaustion(directory, self.file_handling.MAXIMUM_FILES_STORED)
 
 
+    def downsample_frame(self, frame, sample_scale):
+
+        '''
+        '''
+
+        sample_width = int(frame.shape[1] * sample_scale / 100)
+        sample_height = int(frame.shape[0] * sample_scale / 100)
+
+        sampled_dimensions = (sample_width, sample_height)
+
+        downsampled_frame = cv2.resize(
+            frame,
+            sampled_dimensions,
+            cv2.INTER_AREA
+        )
+
+        return downsampled_frame
+
+
     def process_frames(self, frame):
+
+        scale = 20
+
+        self.downsample_frame(frame, scale)
 
         grayscale_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -73,58 +99,55 @@ class ObjectDetection(object):
 
         # Initialise threat level variable in case none available from the start. 
         threat_level = 1
+        threat_text = 'N/A'
 
         # Iterate over each detection in the list provided.
         for detection in detections:
 
             # Accumulate detection data.
-            x, y, w, h, ID, threat_level = detection
+            x, y, w, h, threat_level = detection
+
+            x_pred, y_pred = self.object_tracking.kf_predict(x, y)
 
             # Associate visualiation colour with the detections threat level.
             if threat_level == 1:
                 detection_colour = self.threat_levels[threat_level]
+                threat_text = 'Low'
             elif threat_level == 2:
                 detection_colour = self.threat_levels[threat_level]
+                threat_text = 'Medium'
             elif threat_level == 3:
                 detection_colour = self.threat_levels[threat_level]
+                threat_text = 'High'
             else: 
                 # default error colour. 
                 detection_colour = (0, 0, 0)
 
-            # Calculate a detections center points. 
-            center_point_x = ((x * 2) + w) // 2
-            center_point_y = ((y * 2) + h) // 2
-
             # Use OpenCv to draw onto the frame. 
             cv2.putText(
                 img=frame,
-                text=f'ID: {ID}', 
-                org=(center_point_x - 12, center_point_y - 12),
+                text=f'Threat Level: {threat_text}', 
+                org=(w // 2, y // 2 - 12),
                 fontFace=cv2.FONT_HERSHEY_PLAIN, 
-                fontScale=3, 
-                color=detection_colour,
-                thickness=3
-            )
-            cv2.rectangle(
-                img=frame,
-                pt1=(x, y), 
-                pt2=(x + w, y + h), 
+                fontScale=2, 
                 color=detection_colour,
                 thickness=2
             )
-            cv2.circle(
-                img=frame, 
-                center=(center_point_x, center_point_y),
-                radius=4, 
-                color=detection_colour, 
-                thickness=-1
-            )      
+
+            # Predicted kalman bbox
+            cv2.rectangle(
+                img=frame,
+                pt1=(x_pred, y_pred), 
+                pt2=(x_pred + w, y_pred + h), 
+                color=detection_colour,
+                thickness=2
+            )   
 
         # Return processed frame and detections threat_level.
         return frame, threat_level
     
     
-    def motion_detection(self, prev_frame, curr_frame):
+    def motion_detection(self, prev_frame, curr_frame, camera : Camera):
 
         '''
         '''
@@ -148,7 +171,7 @@ class ObjectDetection(object):
         )
 
         # IF the sum of thresholded_frame_pixels is greater than the thresholded value. (Very large value divided for closer approximation).
-        if (np.sum(thresholded_frame_pixels) / 10000) > 1800:
+        if (np.sum(thresholded_frame_pixels) / 100) > camera.settings['sensitivity']:
 
             # Set motion_detected boolean value to true.
             motion_detected = True 
@@ -156,7 +179,7 @@ class ObjectDetection(object):
         return motion_detected
 
 
-    def register_detections(self, frame, threshold = 3400):
+    def register_detections(self, frame, camera : Camera, threshold = 1500, range = 100):
 
         detections = []
 
@@ -168,7 +191,7 @@ class ObjectDetection(object):
 
         _, masked_frame = cv2.threshold(
             processed_frame, 
-            254,
+            camera.settings['range'],
             255,
             cv2.THRESH_BINARY
         )
@@ -183,7 +206,7 @@ class ObjectDetection(object):
 
             contour_area = cv2.contourArea(contour)
 
-            if contour_area > threshold:
+            if contour_area > camera.settings['threshold']:
 
                 # Compute the bounding box data for that contour.
                 x, y, w, h = cv2.boundingRect(contour)

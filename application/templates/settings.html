@@ -34,30 +34,6 @@
                         </form>
                 </div>
 
-                <!-- Motion Detection Toggle On/Off. -->
-                <div class = 'settings-box'>
-                        <h2 class='settings-title'>Computer Vision: <span class = 'page-info'>
-                                {% if settings.vision_toggle %}
-                                        On 
-                                {% else %}
-                                        Off
-                                {% endif %}
-                        </span></h2>
-                        <form action = '/settings/update' method = 'POST'>
-                                <button
-                                type = 'submit'
-                                name = "toggle"
-                                class = 'settings-btn'
-                                value = 'vision'>
-                                {% if settings.vision_toggle %}
-                                        On
-                                {% else %}
-                                        Off
-                                {% endif %}
-                                </button>
-                        </form>
-                </div>
-
                 <!-- Threshold tuning for computer vision. -->
                 <h1>Computer Vision Tuning :</h1>
 
@@ -79,7 +55,7 @@
                                         name = 'slider_name'
                                         value = 'sleep'
                                 />
-                        <p class = 'settings-text'>600</p>
+                        <p class = 'settings-text'>254</p>
                         <button
                                         type = 'submit'
                                         name = 'form_submit'
@@ -87,6 +63,36 @@
                         </button>
                         </form>
                 </div>
+
+                
+                <!-- Slider to control the computer vision algorithms threshold. -->
+                <div class = 'settings-box'>
+                        <h2 class='settings-title'>Range: <span class = 'page-info'>{{ settings.range }}</span>pixels</h2>
+                        <form action = '/settings/update' method = 'POST'>
+                                <p class = 'settings-text'>0</p>
+                                <input
+                                        type = 'range'
+                                        class = 'settings-slider'
+                                        min = '0'
+                                        max = '254'
+                                        value = '{{ settings.range }}'
+                                        name = 'slider' 
+                                />
+                                        <input
+                                        type = 'hidden'
+                                        name = 'slider_name'
+                                        value = 'range'
+                                />
+                                <p class = 'settings-text'>254</p>
+                                <button
+                                        type = 'submit'
+                                        name = 'form_submit'
+                                        class='settings-btn'>Apply Range
+                                </button>
+                        </form>
+                </div>
+
+
 
                 <!-- Slider to control the computer vision algorithms threshold. -->
                 <div class = 'settings-box'>

@@ -8,7 +8,7 @@ class FileHandling(object):
     FileHandling class to seperate multiple functions concerned with managing the captures kept within the devices local storage, bunlding them together in one location.
     '''
 
-    def __init__(self, CAPTURES_DIRECTORY : str = './v2/static/captures/', FORMATTED_FILENAME_DATE : str = '%a-%b-%Y_%I-%M-%S%p', FORMATTED_DISPLAY_DATE : str = '%I:%M:%S%p', MAXIMUM_FILES_STORED : int = 30) -> None:
+    def __init__(self, CAPTURES_DIRECTORY : str = './static/captures/', FORMATTED_FILENAME_DATE : str = '%a-%b-%Y_%I-%M-%S%p', FORMATTED_DISPLAY_DATE : str = '%I:%M:%S%p', MAXIMUM_FILES_STORED : int = 30) -> None:
         
         # Initialise list that will store the images metadata.
         self.stored_images : List = []

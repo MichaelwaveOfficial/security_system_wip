@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict
-import math, time
+import math, time, cv2, numpy as np
 
 
 class ObjectTracking(object):
@@ -14,7 +14,7 @@ class ObjectTracking(object):
         self.detection_center_points : Dict[int, Tuple[int, int]] = {}
 
         # Dictionary to store the detections ID and the time it was last seen.
-        self.last_detected : Dict[int, float] = {}
+        self.last_detected = {}
 
         # Assign unique ID values to each detection.
         self.ID_increment_counter : int = 0
@@ -37,6 +37,27 @@ class ObjectTracking(object):
         # Time taken to escalate a detections threat level. 
         self.ESCALATION_TIME = ESCALATION_TIME
 
+        self.kf_filter = cv2.KalmanFilter(4, 2)  # State vector size is now 8, Measurement vector size is 4
+
+        self.kf_filter.measurementMatrix = np.array([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+        ], np.float32)
+
+        self.kf_filter.transitionMatrix = np.array([
+            [1, 0, 1, 0],
+            [0, 1, 0, 1],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ], np.float32)
+
+        self.kf_filter.processNoiseCov = np.array([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ], np.float32) * 0.05
+
 
     '''
     Functions to handle the registering, deregistering and tracking of object detections. 
@@ -57,7 +78,7 @@ class ObjectTracking(object):
         intial_time : float = time.time()
 
         # Initialise list storing bounding box data. 
-        bounding_boxes : List[Tuple[int, int, int, int, int]] = []
+        bounding_boxes : List[Tuple[int, int, int, int]] = []
 
         # Iterate over detections parameterised. 
         for detection in detections:
@@ -85,7 +106,7 @@ class ObjectTracking(object):
                     self.detection_center_points[detection_ID] = (center_point_x, center_point_y)
 
                     # Append last time detection was seen to the dictionary with its ID.
-                    self.last_detected[detection_ID] = intial_time
+                    self.last_detected[detection_ID] = intial_time, x, y, w, h
 
                     # Check detections current time exceeds the threat escalation timer before its level can be raised.
                     if intial_time - self.last_increments.get(detection_ID, 0) > self.ESCALATION_TIME:
@@ -97,7 +118,7 @@ class ObjectTracking(object):
                         self.last_increments[detection_ID] = intial_time
 
                     # Update the bounding_box list with current data. 
-                    bounding_boxes.append([x, y, w, h, detection_ID, self.detection_threat_level[detection_ID]])
+                    bounding_boxes.append([x, y, w, h, self.detection_threat_level[detection_ID]])
 
                     # Detection has been handled, set its status as already_detected to True. 
                     already_detected = True
@@ -112,7 +133,7 @@ class ObjectTracking(object):
                 self.detection_center_points[self.ID_increment_counter] = (center_point_x, center_point_y)
 
                 # Attribute detections last seen time.
-                self.last_detected[self.ID_increment_counter] = intial_time
+                self.last_detected[self.ID_increment_counter] = intial_time, x, y, w, h
 
                 # Initalise the threat level for that detection.
                 self.detection_threat_level[self.ID_increment_counter] = 1
@@ -120,7 +141,7 @@ class ObjectTracking(object):
                 self.last_increments[self.ID_increment_counter] = intial_time
 
                 # Update the bounding_box list with current data.
-                bounding_boxes.append([x, y, w, h, self.ID_increment_counter, 1])
+                bounding_boxes.append([x, y, w, h, 1])
 
                 # Increment the detections counter. 
                 self.ID_increment_counter += 1
@@ -130,9 +151,11 @@ class ObjectTracking(object):
         
         # Iterate over detections and their attributes from the dictionary. 
         for detection_ID, last_seen in self.last_detected.items():
-            
+
+            last_timed, _, _, _, _ = last_seen
+
             # If the detection exceeds deregistration time.
-            if intial_time - last_seen > self.DEREGISTRATION_TIME:
+            if intial_time - last_timed > self.DEREGISTRATION_TIME:
                 
                 # Append to deregistrations list. 
                 deregistered_detections.append(detection_ID)
@@ -152,3 +175,23 @@ class ObjectTracking(object):
         
         # Return bounding_boxes list for later access. 
         return bounding_boxes
+    
+
+    def kf_predict(self, x, y):
+
+        '''
+
+        Estimate object position for smoother tracking.
+
+        '''
+
+        calculation = np.array([[ np.float32(x) ], [ np.float32(y)]])
+
+        self.kf_filter.correct(calculation)
+
+        prediction = self.kf_filter.predict()
+
+        x, y = int(prediction[0]), int(prediction[1])
+
+        return x, y
+    

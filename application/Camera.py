@@ -12,18 +12,16 @@ class Camera(object):
         self.settings = {
             # Camera on/off
             'camera_toggle' : True,
-            # Detection alerts toggle.
-            'vision_toggle' : False,
             # Time to re-initialise motion detection functionality.
             'sleep' : 5, 
             # Threshold setting for motion detection.
-            'threshold' : 35, 
+            'threshold' : 1500, 
             # Sensitivity setting for motion detection.
-            'sensitivity' :800,
+            'sensitivity' : 1800,
+            #
+            'range' : 100,
             # Stream framerate setting. 
-            'fps' : 30,
-            # Stream resolution setting. 
-            'resolution' : 720,
+            'fps' : 60,
         }
 
         # Access the onboard camera using OpenCV, 0 represents camera, 1 for video input. 
@@ -32,6 +30,47 @@ class Camera(object):
 
     ''' Functions concerned with the cameras functionality. '''
 
+
+    def draw_clock(self, frame : np.ndarray, time : str) -> np.ndarray:
+
+        '''
+        dsa
+
+        :param: frame - Frame to be copied and drawn upon.
+        :param: time - Current time passed in as a string argument. 
+        :return: clock_overlay - New frame copied from one parameterised, applies clock to the top left corner. Mitigates interference with computer vision.
+        '''
+
+        # Get dimensions of the parameterised frame for the copy. 
+        width, height, _ = frame.shape
+
+        # Create overlay copy using supplied dimensions.
+        clock_overlay = np.zeros((width, height, 3), dtype=np.uint8)
+
+        # Background for the text.
+        cv2.rectangle(
+            img=clock_overlay, 
+            pt1=(0, 0),
+            pt2=(225, 50),
+            color=(50, 50, 50),
+            thickness = -1,
+            lineType=cv2.LINE_8,
+            shift=0
+        )
+        # Date text for the frame.
+        cv2.putText(
+            img=clock_overlay,
+            text=str(time),
+            org=(15, 30),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX, 
+            fontScale=1,
+            color=(5, 100, 5), 
+            thickness= 2
+        )
+
+        # Return frame copy. 
+        return clock_overlay
+        
 
     def encode_frame(self, frame : np.ndarray) -> bytes:
 
